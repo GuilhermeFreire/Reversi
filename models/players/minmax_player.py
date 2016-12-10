@@ -17,7 +17,8 @@ class MinMax:
 		#Caso base, nivel_atual = nivel_maximo
 		if temp_level == self.level:
 			scores = state.score()
-			score = scores[0] if self.color is MinMax.WHITE else scores[1]
+			# Score retorna pontuacao [white, black]
+			score = scores[0] if self.color == MinMax.WHITE else scores[1]
 			del state
 			return score, -1
 
@@ -27,10 +28,15 @@ class MinMax:
 		children = state.get_children()
 
 		#Caso nao haja jogada possibilidade de jogada num certo estado
-		#retorna o valo apropriado para esse estado. Eu considerei zero
-		#Mas poderia colocar um valor negativo...
+		#Passamos a vez, logo seu filho e ele mesmo so que na vez do
+		#oponente
 		if children == []:
-			return 0, -1
+			children.append(state)
+
+		#Caso estejamos no estado inicial e so tivermos uma opcao
+		#nem vale a pena olhar o resto da arvore
+		if temp_level == self.level and len(children) == 1:
+			return _, 0
 
 		#Armazena a cor do oponente
 		opponent_color = self._opponent(color)

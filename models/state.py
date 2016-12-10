@@ -28,7 +28,7 @@ class State:
 				elif self.board.get_square_color(i, j) == State.BLACK:
 					black += self.pos_values[i - 1][j - 1]
 
-		return self.board.score()
+		return [white, black]
 
 	def make_children(self, color):
 		valid_moves = self.board.valid_moves(color)
