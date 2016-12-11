@@ -106,4 +106,4 @@ class Board:
     return None if self.board[bracket[0]][bracket[1]] in (Board.OUTER, Board.EMPTY) else bracket
 
   def _opponent(self, color):
-    return Board.BLACK if color is Board.WHITE else Board.WHITE
+    return Board.BLACK if color == Board.WHITE else Board.WHITE
