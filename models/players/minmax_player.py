@@ -9,7 +9,7 @@ class MinMax:
 
 	#Construtor precisa apenas da cor do player e o nivel de profundidade
 	def __init__(self, color, level=4):
-		self.color = MinMax.BLACK if color == MinMax.BLACK else MinMax.WHITE
+		self.color = color
 		self.level = level
 		self.pos_values = [[20, -3, 11, 8, 8, 11, -3, 20],
     						[-3, -7, -4, 1, 1, -4, -7, -3],
@@ -114,6 +114,9 @@ class MinMax:
 		return final_score, idx
 
 	#SWAP oponente.
+	#Aqui foi usado o == ao inves do is, pois a cor que recebemos e do
+	#objeto board, entao se usarmos o is... da ruim
+	#board.WHITE != minmax.WHITE
 	def _opponent(self, color):
 		return MinMax.BLACK if color == MinMax.WHITE else MinMax.WHITE
 
