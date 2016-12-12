@@ -8,10 +8,11 @@ class MinMax:
 	EMPTY, BLACK, WHITE, OUTER = '.', '□', '■', '?'
 
 	#Construtor precisa apenas da cor do player e o nivel de profundidade
-	def __init__(self, color, level=4, threshold=30):
+	def __init__(self, color, level=4, threshold=15):
 		self.color = color
 		self.level = level
 		self.threshold = threshold
+		self.turn = 0
 		self.pos_values = [[20, -3, 11, 8, 8, 11, -3, 20],
     						[-3, -7, -4, 1, 1, -4, -7, -3],
     						[11, -4, 2, 2, 2, 2, -4, 11],
@@ -21,15 +22,14 @@ class MinMax:
     						[-3, -7, -4, 1, 1, -4, -7, -3],
     						[20, -3, 11, 8, 8, 11, -3, 20]]
 
+
 	#Constroi a arvore a partir do estado atual do tabuleiro
 	def build_tree(self, state, temp_level, color, cut=None, father=None):
 		#Caso base, nivel_atual = nivel_maximo
 		if temp_level == self.level:
-			scores = self.score(state.get_board())
-			# Score retorna pontuacao [white, black]
-			score = scores[0] if self.color == MinMax.WHITE else scores[1]
+			score = self.score(state.get_board(), color)
+
 			if abs(score - father) > self.threshold:
-				print "Entrei:", score, father
 				state.make_children(color)
 				children = state.get_children()
 				if children == []:
@@ -37,9 +37,8 @@ class MinMax:
 
 				scores = []
 				for child in children:
-					child_score = self.score(state.get_board())
-					score = scores[0] if self.color == MinMax.WHITE else scores[1]
-					scores.append(score)
+					child_score = self.score(state.get_board(), color)
+					scores.append(child_score)
 
 				if color == self.color:
 					score = max(scores)
@@ -77,9 +76,8 @@ class MinMax:
 		First = True
 		ab = None
 		if temp_level == self.level -1:
-			father = self.score(state.get_board())
-			# Score retorna pontuacao [white, black]
-			father = father[0] if color == MinMax.WHITE else father[1]
+			father = self.score(state.get_board(), color)
+			
 
 		for child in children:
 			if First == True:
@@ -146,9 +144,19 @@ class MinMax:
 		return MinMax.BLACK if color == MinMax.WHITE else MinMax.WHITE
 
 	#Calcula a pontuacao de um stado
-	def score(self, board):
+	def score(self, board, color):
 		white = 0
 		black = 0
+		# moves_black = board.valid_moves(board.BLACK)
+		# moves_white = board.valid_moves(board.WHITE)
+		# if moves_black == [] and moves_white == []:
+		# 	tiles = board.score()
+		# 	if color == MinMax.BLACK:
+		# 		tiles[0], tiles[1] = tiles[1], tiles[0]
+		# 	if tiles[0] > tiles[1]:
+		# 		return float("inf")
+		# 	elif tiles[0] < tiles[1]:
+		# 		return float("-inf")
 		for i in range(1, 9):
 			for j in range(1, 9):
 				if board.get_square_color(i, j) == MinMax.WHITE:
@@ -156,57 +164,22 @@ class MinMax:
 				elif board.get_square_color(i, j) == MinMax.BLACK:
 					black += self.pos_values[i - 1][j - 1]
 
-		return [white, black]
+		score = white if color == MinMax.WHITE else black
 
-	# def quiescence(self,alpha,beta,score, level):
-	# 	if level == 3:
-	# 		return score
-
-	# 	if score >= beta:
-	# 		return beta
-	# 	if score > alpha:
-	# 		alpha = score
-
-	# 	while (verify_all_captures):
-	# 		MakeCapture()
-	# 		score = -quiescence(-beta, -alpha, score, max_level)
-	# 		TakeBackMove();
-
-	# 		if score >= beta:
-	# 			return beta;
-	# 		if score > alpha:
-	# 			alpha = score;
-
-	# 	return alpha;
+		return score
 
 	#Faz jogada.
 	def play(self, board):
 		#Estado inicial, configuracao atual do tabuleiro.
 		root = State(board)
+		self.turn += 1
+
+		# print tiles, self.level
+		if self.turn > 13:
+			self.level = 5
+		if self.turn > 27:
+			self.level = 8
 		#Apois contruir a arvore e obtemos o indice do array de movimentos
 		#que corresponde a jogada que o minmax decidiu.
 		_, idx_move = self.build_tree(root,1,self.color,None,None)
 		return root.board.valid_moves(self.color)[idx_move]
-
-	def quiescence(self,alpha,beta,score, max_level):
-		if self.level >= max_level:
-			return score
-
-		if score >= beta:
-			return beta
-		if score > alpha:
-			alpha = score
-
-		while (verify_all_captures):
-			MakeCapture()
-			score = -quiescence(-beta, -alpha, score, max_level)
-			TakeBackMove();
-
-			if score >= beta:
-				return beta;
-			if score > alpha:
-				alpha = score;
-
-		return alpha;
-
-
