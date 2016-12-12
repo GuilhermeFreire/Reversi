@@ -187,3 +187,26 @@ class MinMax:
 		#que corresponde a jogada que o minmax decidiu.
 		_, idx_move = self.build_tree(root,1,self.color,None,None)
 		return root.board.valid_moves(self.color)[idx_move]
+
+	def quiescence(self,alpha,beta,score, max_level):
+		if self.level >= max_level:
+			return score
+
+		if score >= beta:
+			return beta
+		if score > alpha:
+			alpha = score
+
+		while (verify_all_captures):
+			MakeCapture()
+			score = -quiescence(-beta, -alpha, score, max_level)
+			TakeBackMove();
+
+			if score >= beta:
+				return beta;
+			if score > alpha:
+				alpha = score;
+
+		return alpha;
+
+
